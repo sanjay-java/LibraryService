@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/member")
 public class MemberController {
-
     @Autowired
     private MemberService memberService;
 
