@@ -28,7 +28,6 @@ public class BookService {
         books.add(book);
         return book;
     }
-
     public Book updateBook(Long bookId, Book updatedBook) {
         for (Book book : books) {
             if (book.getBookId().equals(bookId)) {

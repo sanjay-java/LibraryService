@@ -6,7 +6,6 @@ public class Book {
     private String isbn;
     private double price;
     private String genre;
-
     // Constructor
     public Book(Long bookId, String title, String author, String isbn, double price, String genre) {
         this.bookId = bookId;
