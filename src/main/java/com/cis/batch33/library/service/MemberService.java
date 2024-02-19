@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-
 @Service
 public class MemberService {
     private Map<Long, Member> memberMap = new HashMap<>();
