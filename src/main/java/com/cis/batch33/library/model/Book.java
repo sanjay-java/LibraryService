@@ -1,5 +1,4 @@
 package com.cis.batch33.library.model;
-
 public class Book {
     private Long bookId;
     private String title;
