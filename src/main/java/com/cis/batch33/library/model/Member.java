@@ -2,17 +2,29 @@ package com.cis.batch33.library.model;
 
 public class Member {
 
-    private long memberId;
+    private Long memberId;
     private String firstName;
     private String lastName;
     private String emailAddress;
     private String phoneNumber;
 
-    public long getMemberId() {
+    public Member() {
+        // Default constructor
+    }
+
+    // Constructor without memberId
+    public Member(String firstName, String lastName, String emailAddress, String phoneNumber) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.emailAddress = emailAddress;
+        this.phoneNumber = phoneNumber;
+    }
+
+    public Long getMemberId() {
         return memberId;
     }
 
-    public void setMemberId(long memberId) {
+    public void setMemberId(Long memberId) {
         this.memberId = memberId;
     }
 
@@ -27,6 +39,7 @@ public class Member {
     public String getLastName() {
         return lastName;
     }
+
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
