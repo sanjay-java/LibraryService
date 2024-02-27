@@ -1,6 +1,8 @@
 package com.cis.batch33.library.service;
 
 import com.cis.batch33.library.entity.LibraryMember;
+import com.cis.batch33.library.model.AddressDTO;
+import com.cis.batch33.library.model.CheckoutDTO;
 import com.cis.batch33.library.model.Member;
 import com.cis.batch33.library.repository.LIbraryMemberRepository;
 import jakarta.persistence.PersistenceContext;
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MemberService {
@@ -16,7 +19,8 @@ public class MemberService {
     @Autowired
     private LIbraryMemberRepository memberRepository;
 
-    public LibraryMember createMember(LibraryMember member){
+    public LibraryMember createMember(Member member){
+    //  map DTO to Entity
 
         // call the database
         Integer memberId = new Random().nextInt();
@@ -25,12 +29,44 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
-    public LibraryMember getMember(Integer memberId) {
+    public Member getMember(Integer memberId) {
 
        Optional<LibraryMember> memberOptional =
                memberRepository.findById(memberId);
-       return  memberOptional.orElse(new LibraryMember());
+       LibraryMember libraryMember =
+               memberOptional.orElse(new LibraryMember());
 
+       Member member = new Member();
+       member.setMemberId(libraryMember.getMemberId());
+       member.setMemberShipLevel(libraryMember.getMemberShipLevel());
+       member.setEmailAddress(libraryMember.getEmailAddress());
+       member.setFirstName(libraryMember.getFirstName());
+       member.setLastName(libraryMember.getLastName());
+       member.setPhoneNumber(libraryMember.getPhoneNumber());
+
+        AddressDTO addressDTO = new AddressDTO();
+        addressDTO.setAddressId(libraryMember.getAddress().getAddressId());
+        addressDTO.setLine1(libraryMember.getAddress().getLine1());
+        addressDTO.setLine2(libraryMember.getAddress().getLine2());
+        addressDTO.setCity(libraryMember.getAddress().getCity());
+        addressDTO.setState(libraryMember.getAddress().getState());
+        addressDTO.setZip(libraryMember.getAddress().getZip());
+
+        List<CheckoutDTO> checkoutDTOS =
+        libraryMember.getCheckouts().stream().map(c -> {
+            CheckoutDTO cdo = new CheckoutDTO();
+            cdo.setId(c.getId());
+            cdo.setIsbn(c.getIsbn());
+            cdo.setCheckoutDate(c.getCheckoutDate());
+            cdo.setDueDate(c.getDueDate());
+            cdo.setReturned(c.isReturned());
+            return  cdo;
+        }).collect(Collectors.toList());
+
+        member.setAddress(addressDTO);
+        member.setCheckouts(checkoutDTOS);
+
+        return member;
     }
 }
 
@@ -74,3 +110,12 @@ public class MemberService {
 // JPA Repositories
 
 // GET POST PUT DELETE - member and book
+
+//GET
+// Member DTO with address and checkouts
+// Book DTO with all ISBNS and all Checkouts
+
+// POST and PUT
+
+// Member DTO along with Address,
+// Book DTO along with isbns,

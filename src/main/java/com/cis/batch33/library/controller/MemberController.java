@@ -14,13 +14,13 @@ public class MemberController {
     private MemberService memberService;
 
     @GetMapping
-    public LibraryMember getMember(Integer memberId){
+    public Member getMember(Integer memberId){
         return memberService.getMember(memberId);
     }
 
     // create a member
     @PostMapping
-    public LibraryMember createMember(@RequestBody LibraryMember member){
+    public LibraryMember createMember(@RequestBody Member member){
         return memberService.createMember(member);
     }
 }

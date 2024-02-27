@@ -1,10 +1,10 @@
 package com.cis.batch33.library.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Check;
+
+import java.util.List;
 
 @Table(name="library_member")
 @Entity
@@ -30,8 +30,15 @@ public class LibraryMember {
     @Column(name="memebership_level")
     private String memberShipLevel;
 
-    @Column(name="address_id")
-    private Long addressId;
+    @ManyToOne
+    @JoinColumn(name="address_id")
+    private Address address;
+
+    @OneToMany(mappedBy = "libraryMember")
+    private List<Checkout> checkouts;
+
+
+
 
     // lombok
 
