@@ -1,11 +1,9 @@
 package com.cis.batch33.library.service;
 
 import com.cis.batch33.library.entity.LibraryMember;
-import com.cis.batch33.library.model.AddressDTO;
-import com.cis.batch33.library.model.CheckoutDTO;
 import com.cis.batch33.library.model.Member;
 import com.cis.batch33.library.repository.LIbraryMemberRepository;
-import jakarta.persistence.PersistenceContext;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,18 +13,23 @@ import java.util.stream.Collectors;
 @Service
 public class MemberService {
 
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Autowired
     private LIbraryMemberRepository memberRepository;
 
-    public LibraryMember createMember(Member member){
-    //  map DTO to Entity
-
-        // call the database
-        Integer memberId = new Random().nextInt();
+    public Member createMember(Member member){
+        Random r = new Random();
+        Integer memberId = r.nextInt(Integer.MAX_VALUE);
         member.setMemberId(memberId);
+        member.getAddress().setAddressId(r.nextInt(Integer.MAX_VALUE));
+        LibraryMember libraryMember =
+                modelMapper.map(member,LibraryMember.class);
 
-        return memberRepository.save(member);
+        LibraryMember lm =  memberRepository.save(libraryMember);
+        return modelMapper.map(lm, Member.class);
+
     }
 
     public Member getMember(Integer memberId) {
@@ -34,39 +37,30 @@ public class MemberService {
        Optional<LibraryMember> memberOptional =
                memberRepository.findById(memberId);
        LibraryMember libraryMember =
-               memberOptional.orElse(new LibraryMember());
+               memberOptional.orElseThrow(() -> new IllegalArgumentException());
 
-       Member member = new Member();
-       member.setMemberId(libraryMember.getMemberId());
-       member.setMemberShipLevel(libraryMember.getMemberShipLevel());
-       member.setEmailAddress(libraryMember.getEmailAddress());
-       member.setFirstName(libraryMember.getFirstName());
-       member.setLastName(libraryMember.getLastName());
-       member.setPhoneNumber(libraryMember.getPhoneNumber());
+        Member m =   modelMapper.map(libraryMember, Member.class);
+        return m;
+    }
 
-        AddressDTO addressDTO = new AddressDTO();
-        addressDTO.setAddressId(libraryMember.getAddress().getAddressId());
-        addressDTO.setLine1(libraryMember.getAddress().getLine1());
-        addressDTO.setLine2(libraryMember.getAddress().getLine2());
-        addressDTO.setCity(libraryMember.getAddress().getCity());
-        addressDTO.setState(libraryMember.getAddress().getState());
-        addressDTO.setZip(libraryMember.getAddress().getZip());
+    public Member updateMember(Member member) {
+        LibraryMember libraryMember = modelMapper.map(member, LibraryMember.class);
+        LibraryMember returnValue = memberRepository.save(libraryMember);
+        return modelMapper.map(returnValue, Member.class);
+    }
 
-        List<CheckoutDTO> checkoutDTOS =
-        libraryMember.getCheckouts().stream().map(c -> {
-            CheckoutDTO cdo = new CheckoutDTO();
-            cdo.setId(c.getId());
-            cdo.setIsbn(c.getIsbn());
-            cdo.setCheckoutDate(c.getCheckoutDate());
-            cdo.setDueDate(c.getDueDate());
-            cdo.setReturned(c.isReturned());
-            return  cdo;
-        }).collect(Collectors.toList());
+    public void deleteMember(Integer memberId) {
+        Optional<LibraryMember> lm = memberRepository.findById(memberId);
+        if(lm.isPresent())
+            memberRepository.delete(lm.get());
+    }
 
-        member.setAddress(addressDTO);
-        member.setCheckouts(checkoutDTOS);
-
-        return member;
+    public List<Member> getAllMembers() {
+       List<LibraryMember> libraryMembers = memberRepository.findAll();
+       return libraryMembers.stream().map( lm ->
+       {
+           return modelMapper.map(lm, Member.class);
+       }).collect(Collectors.toList());
     }
 }
 

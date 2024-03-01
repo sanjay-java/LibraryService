@@ -12,6 +12,7 @@ import java.util.Date;
 public class CheckoutDTO {
     private Integer id;
     private Long isbn;
+    private Long memberId;
     private Date checkoutDate;
     private Date dueDate;
     private boolean isReturned;

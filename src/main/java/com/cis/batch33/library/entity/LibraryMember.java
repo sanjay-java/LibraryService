@@ -12,7 +12,6 @@ import java.util.List;
 public class LibraryMember {
 
     @Id
-    @Column(name="member_id")
     private Integer memberId;
 
     @Column(name="first_name")
@@ -30,7 +29,7 @@ public class LibraryMember {
     @Column(name="memebership_level")
     private String memberShipLevel;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="address_id")
     private Address address;
 

@@ -11,7 +11,9 @@ import java.util.Date;
 public class Checkout {
     @Id
     private Integer id;
-    private Long isbn;
+    @ManyToOne
+    @JoinColumn(name="isbn")
+    private BookIsbn bookIsbn;
     @ManyToOne
     @JoinColumn(name = "member_id")
     private LibraryMember libraryMember;
